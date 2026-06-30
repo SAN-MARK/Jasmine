@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-surface-container-high: #eae8e4;
+  --color-on-tertiary: #ffffff;
+  --color-surface-tint: #526253;
+  --color-tertiary-container: #8a6d72;
+  --color-on-primary: #ffffff;
+  --color-on-surface-variant: #434842;
+  --color-primary-fixed-dim: #b9cbb8;
+  --color-surface-variant: #e4e2de;
+  --color-on-secondary-container: #7a5039;
+  --color-on-secondary-fixed-variant: #643d28;
+  --color-tertiary: #70555a;
+  --color-background: #fbf9f5;
+  --color-surface: #fbf9f5;
+  --color-surface-bright: #fbf9f5;
+  --color-surface-container: #efeeea;
+  --color-primary-container: #687969;
+  --color-on-error: #ffffff;
+  --color-error: #ba1a1a;
+  --color-inverse-surface: #30312e;
+  --color-surface-container-highest: #e4e2de;
+  --color-tertiary-fixed-dim: #e1bec3;
+  --color-on-surface: #1b1c1a;
+  --color-secondary-fixed-dim: #f2ba9e;
+  --color-on-secondary: #ffffff;
+  --color-on-primary-fixed-variant: #3b4b3c;
+  --color-on-tertiary-fixed-variant: #594045;
+  --color-on-tertiary-container: #fffbff;
+  --color-on-primary-fixed: #101f13;
+  --color-primary-fixed: #d5e7d4;
+  --color-on-background: #1b1c1a;
+  --color-on-primary-container: #f7fff3;
+  --color-secondary: #7f543e;
+  --color-inverse-primary: #b9cbb8;
+  --color-outline: #747872;
+  --color-tertiary-fixed: #fed9df;
+  --color-primary: #506051;
+  --color-surface-dim: #dbdad6;
+  --color-outline-variant: #c3c8c0;
+  --color-on-error-container: #93000a;
+  --color-secondary-container: #ffc5a9;
+  --color-error-container: #ffdad6;
+  --color-surface-container-low: #f5f3ef;
+  --color-on-secondary-fixed: #311303;
+  --color-inverse-on-surface: #f2f0ed;
+  --color-surface-container-lowest: #ffffff;
+  --color-secondary-fixed: #ffdbca;
+  --color-on-tertiary-fixed: #2a161a;
+
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Montserrat", system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: var(--font-sans);
+}
+
+.paper-grain {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("https://www.transparenttextures.com/patterns/felt.png");
+}
+
+.steam-container {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 100px;
+  pointer-events: none;
+}
+
+.steam-particle {
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  background: rgba(80, 96, 81, 0.4); /* Uses primary green color */
+  filter: blur(4px);
+  border-radius: 50%;
+  animation: steam-rise 3s infinite ease-out;
+  opacity: 0;
+}
+
+@keyframes steam-rise {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  20% { opacity: 0.4; }
+  100% { transform: translateY(-80px) scale(3); opacity: 0; }
+}
+
+.fade-in-up {
+  animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+
+.book-spine {
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-origin: left;
+}
+.book-spine:hover {
+  transform: scaleX(1.05) rotateZ(-1deg);
+}
+
+.signature-font {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

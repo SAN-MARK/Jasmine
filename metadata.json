@@ -1,0 +1,6 @@
+{
+  "name": "Cozy Creative Sanctuary",
+  "description": "An elegant, tactile digital sanctuary for author Jasmine Patra, featuring a curated bookshelf, interactive essays, and reader correspondence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
