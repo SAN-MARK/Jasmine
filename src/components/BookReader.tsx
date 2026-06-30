@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Book } from '../types';
 import { X, ChevronLeft, ChevronRight, Type, Sparkles } from 'lucide-react';
+import BookPurchase from './BookPurchase';
 
 interface BookReaderProps {
   book: Book;
@@ -143,7 +144,7 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
           readMode === 'pages' ? paperClasses[paperTone] : 'bg-[#fcfaf6] text-[#423a31]'
         }`}>
           {readMode === 'abstract' ? (
-            <div className="space-y-4 fade-in-up">
+            <div className="space-y-5 fade-in-up">
               <div className="flex items-center gap-1.5 text-stone-500 text-xs font-sans uppercase tracking-widest mb-2">
                 <Sparkles size={12} className="text-secondary" />
                 <span>Synopsis & Inspiration</span>
@@ -151,7 +152,14 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
               <p className="leading-relaxed text-sm md:text-base italic font-serif text-stone-700">
                 "{book.abstract}"
               </p>
-              <div className="pt-6 border-t border-stone-200/50">
+              
+              {book.id === 'mask-of-happiness' && (
+                <div className="pt-2">
+                  <BookPurchase />
+                </div>
+              )}
+
+              <div className="pt-4 border-t border-stone-200/50">
                 <button
                   onClick={() => setReadMode('pages')}
                   className="w-full bg-primary hover:bg-primary/90 text-on-primary py-3 px-4 text-xs font-label-sm uppercase tracking-widest transition-all cursor-pointer flex items-center justify-center gap-2"

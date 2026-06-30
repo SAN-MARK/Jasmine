@@ -12,6 +12,7 @@ import {
 import BookReader from './components/BookReader';
 import CorrespondenceBoard from './components/CorrespondenceBoard';
 import AmbientSoundboard from './components/AmbientSoundboard';
+import BookPurchase from './components/BookPurchase';
 import { 
   Menu, 
   X, 
@@ -479,6 +480,11 @@ export default function App() {
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Home-integrated BookPurchase Component */}
+              <div className="pt-4">
+                <BookPurchase />
               </div>
 
             </div>
