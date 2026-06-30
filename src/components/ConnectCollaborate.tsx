@@ -29,11 +29,28 @@ export default function ConnectCollaborate() {
         rel="noopener noreferrer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="w-full py-2 px-3 rounded-sm text-[11px] font-label-sm uppercase tracking-widest font-bold border border-[#7D8E7D] text-[#7D8E7D] hover:bg-[#7D8E7D] hover:text-white transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer"
+        className="w-full py-2.5 px-3 rounded-sm text-[11px] font-label-sm uppercase tracking-widest font-bold border border-[#7D8E7D] text-[#7D8E7D] hover:bg-[#7D8E7D] hover:text-white transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer"
       >
         <span>LinkedIn Profile</span>
         <ArrowUpRight size={12} className={`transition-transform duration-300 ${isHovered ? 'translate-x-0.5 -translate-y-0.5' : ''}`} />
       </a>
+
+      {/* Official Email Contact Details underneath LinkedIn */}
+      <div className="pt-3 border-t border-dashed border-outline-variant/35 text-center space-y-1.5 mt-2">
+        <span className="text-[9px] font-sans font-bold tracking-widest text-on-surface-variant/60 uppercase block">
+          Direct Correspondence
+        </span>
+        <a 
+          href="mailto:pitambarpatra093@gmail.com"
+          className="font-serif italic text-xs text-primary hover:text-primary-dim hover:underline transition-colors block font-medium select-all"
+          title="Send a letter to Jasmine"
+        >
+          pitambarpatra093@gmail.com
+        </a>
+        <p className="text-[9px] font-sans text-on-surface-variant/50">
+          Rourkela, Odisha, India
+        </p>
+      </div>
     </div>
   );
 }
