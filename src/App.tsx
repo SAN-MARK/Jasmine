@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
+import { motion } from 'motion/react';
 import { 
   BOOKS_DATA, 
   JOURNAL_ENTRIES, 
@@ -30,7 +31,14 @@ import {
   Info,
   Calendar,
   Lock,
-  Heart
+  Heart,
+  Download,
+  Award,
+  FileText,
+  Briefcase,
+  GraduationCap,
+  ExternalLink,
+  MapPin
 } from 'lucide-react';
 
 // Safety Masking Utility as requested in safety guidelines
@@ -74,6 +82,8 @@ export default function App() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submissionError, setSubmissionError] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
 
   // Interactive Coffee Mug state
   const [coffeeClicks, setCoffeeClicks] = useState(0);
@@ -335,28 +345,93 @@ export default function App() {
         {/* SCROLLABLE MAIN CONTENT BODY */}
         <main className="flex-1 overflow-y-auto no-scrollbar scroll-smooth">
           
-          {/* 1. HERO SECTION */}
-          <section id="hero" className="relative min-h-[calc(100vh-60px)] px-6 py-12 flex flex-col items-center justify-center text-center overflow-hidden border-b border-outline-variant/10">
+          {/* SECTION 1: THE PHILOSOPHY (Full-Screen) */}
+          <section id="philosophy" className="relative min-h-[calc(100vh-60px)] px-6 py-12 flex flex-col items-center justify-center text-center overflow-hidden border-b border-outline-variant/10 bg-[#282622] text-[#efede9]">
+            {/* Ambient vignette background */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15),transparent_70%)] pointer-events-none"></div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="relative z-10 max-w-sm mx-auto space-y-6 flex flex-col items-center justify-center"
+            >
+              <div className="w-10 h-10 rounded-full border border-[#efede9]/20 flex items-center justify-center mb-1">
+                <Compass size={18} className="text-secondary-fixed-dim" />
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl leading-tight font-bold text-[#f5f2eb] tracking-tight">
+                Curiosity in <br/>Every Season
+              </h2>
+              <div className="w-8 h-0.5 bg-secondary-fixed-dim/40 rounded"></div>
+              <p className="font-serif italic text-xs sm:text-sm text-[#d5d2cb] max-w-xs leading-relaxed">
+                "Every season of life carries its own secret, its own story waiting to be written down in the quiet corners of our hearts."
+              </p>
+              
+              {/* Scrolling Indicator */}
+              <div 
+                onClick={() => {
+                  const element = document.getElementById('hero');
+                  if (element) element.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="pt-8 animate-bounce text-[#efede9]/50 hover:text-primary-fixed-dim cursor-pointer transition-colors"
+              >
+                <span className="text-[10px] tracking-widest uppercase font-sans font-semibold block mb-1">Enter Sanctuary</span>
+                <span className="material-symbols-outlined text-sm">keyboard_double_arrow_down</span>
+              </div>
+            </motion.div>
+          </section>
+
+          {/* SECTION 2: PROFESSIONAL HERO */}
+          <section id="hero" className="relative min-h-[calc(100vh-80px)] px-6 py-12 flex flex-col items-center justify-center text-center overflow-hidden border-b border-outline-variant/10">
             <div className="relative z-10 max-w-sm mx-auto space-y-6 flex flex-col items-center justify-center">
               
-              <h2 className="font-serif text-[28px] sm:text-[32px] md:text-[34px] leading-tight font-bold text-on-surface">
-                WELCOME TO MY LITTLE CORNER OF <span className="italic text-primary underline decoration-tertiary-fixed-dim/70 decoration-2 underline-offset-4">CURIOSITY</span>
+              <span className="text-[9px] font-sans font-bold tracking-widest text-[#7D8E7D] uppercase bg-[#7D8E7D]/10 px-3 py-1 rounded-full">
+                Creative Portfolio
+              </span>
+
+              <h2 className="font-serif text-[26px] sm:text-[30px] leading-tight font-bold text-on-surface">
+                Jasmine Patra | <br/>
+                <span className="italic text-primary underline decoration-tertiary-fixed-dim/70 decoration-2 underline-offset-4">
+                  Creative Writer & Published Author
+                </span>
               </h2>
               
-              <p className="font-sans text-xs sm:text-sm leading-relaxed text-on-surface-variant">
-                I’m Jasmine Patra—a writer, dreamer, and storyteller crafting digital sanctuaries through words.
+              <p className="font-sans text-xs sm:text-sm leading-relaxed text-on-surface-variant max-w-xs">
+                Commerce student passionate about storytelling, content strategy, and community engagement.
               </p>
 
-              {/* Cozy Coffee Interaction Card */}
-              <div className="pt-6 relative">
+              {/* Action Buttons */}
+              <div className="flex flex-row items-center gap-3 w-full max-w-[280px] pt-2">
+                <button 
+                  onClick={() => setResumeOpen(true)}
+                  className="flex-1 bg-primary hover:bg-primary/95 text-on-primary py-3 px-4 rounded-sm text-[10px] font-sans font-bold uppercase tracking-widest transition-all active:scale-[0.98] border border-primary-container shadow-sm cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Download size={12} />
+                  <span>Download Resume</span>
+                </button>
+                <button 
+                  onClick={() => {
+                    const el = document.getElementById('contact');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="flex-1 bg-surface-container hover:bg-surface-container-high text-primary py-3 px-4 rounded-sm text-[10px] font-sans font-bold uppercase tracking-widest transition-all active:scale-[0.98] border border-outline-variant/30 shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Mail size={12} />
+                  <span>Contact Me</span>
+                </button>
+              </div>
+
+              {/* Cozy Coffee Interaction Card (Retained) */}
+              <div className="pt-8 relative">
                 <button 
                   onClick={handleCoffeeClick}
-                  className={`w-20 h-20 mx-auto rounded-full bg-surface-container shadow-inner border border-outline-variant/20 flex items-center justify-center relative active:scale-95 transition-all cursor-pointer group ${
+                  className={`w-16 h-16 mx-auto rounded-full bg-surface-container shadow-inner border border-outline-variant/20 flex items-center justify-center relative active:scale-95 transition-all cursor-pointer group ${
                     isBrewing ? 'animate-pulse ring-1 ring-primary-container' : 'hover:border-primary/40'
                   }`}
                   aria-label="Brew deep thoughts"
                 >
-                  <Coffee size={28} className={`transition-colors ${isBrewing ? 'text-secondary' : 'text-primary group-hover:text-secondary'}`} />
+                  <Coffee size={24} className={`transition-colors ${isBrewing ? 'text-secondary' : 'text-primary group-hover:text-secondary'}`} />
                   
                   {/* Dynamic Steam Particles */}
                   {isBrewing && steamParticles.map((part) => (
@@ -370,13 +445,12 @@ export default function App() {
                     />
                   ))}
                 </button>
-                
-                <div className="absolute -bottom-2 w-28 left-1/2 -translate-x-1/2 h-1 bg-on-surface/5 blur-md rounded-full"></div>
+                <div className="absolute -bottom-2 w-24 left-1/2 -translate-x-1/2 h-1 bg-on-surface/5 blur-md rounded-full"></div>
               </div>
 
               {/* Dynamic Quote beneath Coffee Mug */}
-              <div className="pt-4 px-4 min-h-[48px] flex items-center justify-center">
-                <p className="text-xs italic font-serif text-primary/80 transition-all duration-500 ease-in-out text-center">
+              <div className="pt-2 px-4 min-h-[44px] flex items-center justify-center">
+                <p className="text-[11px] italic font-serif text-primary/80 transition-all duration-500 ease-in-out text-center">
                   "{currentQuote}"
                 </p>
               </div>
@@ -384,45 +458,380 @@ export default function App() {
             </div>
           </section>
 
-          {/* 2. THE MUSE (ABOUT & BIOGRAPHY) */}
+          {/* SECTION 2.5: ABOUT ME & THE JOURNEY (Professional & Intimate About) */}
           <section id="about" className="py-16 px-6 bg-[#f5f3ef] border-b border-outline-variant/20">
             <div className="max-w-sm mx-auto space-y-6">
               
               <div className="flex items-center gap-3">
                 <div className="h-px flex-1 bg-tertiary/20"></div>
                 <span className="font-sans text-[10px] uppercase font-bold tracking-widest text-tertiary">
-                  The Muse
+                  The Journey
                 </span>
                 <div className="h-px flex-1 bg-tertiary/20"></div>
               </div>
 
-              {/* Dropped Capital Paragraph */}
-              <p className="font-sans text-sm leading-relaxed text-on-surface-variant">
-                <span className="font-serif text-3xl font-bold text-primary mr-1.5 float-left leading-[0.8]">
-                  M
-                </span>
-                y journey as an author began with a simple belief: that every soul has a story that deserves a soft place to land. Through my creative explorations, I've sought to bridge the gap between human vulnerability and digital expression.
-              </p>
+              {/* Split layout simulation with Portrait Frame and Narrative Story */}
+              <div className="space-y-6">
+                
+                {/* Custom Crafted Portrait Illustration Frame */}
+                <div className="relative p-3 bg-white border border-outline-variant/30 rounded shadow-md max-w-[210px] mx-auto transform -rotate-1 hover:rotate-0 transition-transform duration-300">
+                  <div className="relative aspect-square w-full rounded-sm overflow-hidden bg-[#7D8E7D]/15 flex flex-col items-center justify-center border border-stone-200">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.4),transparent_80%)]"></div>
+                    <span className="font-serif italic text-4xl font-bold text-primary tracking-tighter">JP</span>
+                    <p className="text-[9px] uppercase font-sans tracking-widest font-bold text-primary mt-1">Jasmine Patra</p>
+                    <div className="flex items-center justify-center gap-1 mt-2.5 text-secondary">
+                      <Feather size={10} />
+                      <span className="text-[8px] uppercase tracking-wider font-sans font-semibold">Author & Strategist</span>
+                    </div>
+                  </div>
+                  <p className="text-[9px] text-stone-500 italic font-serif text-center mt-2.5">
+                    "Lost in the world of words..."
+                  </p>
+                </div>
 
-              <p className="font-sans text-sm leading-relaxed text-on-surface-variant">
-                Beyond the written word, I am deeply committed to social impact, collaborating with organizations like <span className="text-primary font-semibold">Marpu</span> and <span className="text-primary font-semibold">InAmigos Foundations</span> to foster community and growth through creative education.
-              </p>
+                {/* Cozy Narrative Introduction */}
+                <div className="text-left space-y-4">
+                  <p className="font-serif italic text-sm text-primary leading-relaxed text-center font-medium">
+                    "I spend my mornings in commerce lectures and my evenings lost in the world of words."
+                  </p>
+                  
+                  <div className="h-px bg-stone-300/45 w-16 mx-auto"></div>
+
+                  <p className="font-sans text-xs sm:text-sm leading-relaxed text-on-surface-variant">
+                    As a Commerce student and published author, I bridge the gap between creative storytelling and professional content strategy. With experience in NGO-led social impact and a track record of winning literary competitions, I specialize in crafting compelling narratives that resonate with diverse audiences.
+                  </p>
+                </div>
+
+              </div>
 
               {/* Cozy Blockquote card */}
-              <div className="bg-surface-container p-6 border border-outline-variant/30 rounded-lg relative overflow-hidden">
+              <div className="bg-surface-container p-6 border border-outline-variant/30 rounded-lg relative overflow-hidden text-left">
                 <div className="absolute top-1 right-2 opacity-5">
                   <span className="material-symbols-outlined text-5xl">format_quote</span>
                 </div>
-                <p className="italic font-serif text-sm md:text-base text-on-surface mb-3 leading-relaxed">
+                <p className="italic font-serif text-xs md:text-sm text-on-surface mb-3 leading-relaxed">
                   "Writing is not just a profession; it is a way of seeing the world in shades of wonder."
                 </p>
-                <p className="signature-font text-base text-primary font-bold">
+                <p className="signature-font text-xs text-primary font-bold">
                   — Jasmine Patra
                 </p>
               </div>
 
-              {/* Connect & Collaborate Social Section */}
-              <ConnectCollaborate />
+            </div>
+          </section>
+
+          {/* SECTION 3: MY CREATIVE PILLARS (Clickable Categories) */}
+          <section id="pillars" className="py-16 px-6 border-b border-outline-variant/15 bg-background">
+            <div className="max-w-sm mx-auto space-y-6">
+              
+              <div className="text-center space-y-1.5">
+                <h3 className="font-serif text-lg font-bold text-on-surface">My Creative Pillars</h3>
+                <p className="text-xs text-on-surface-variant font-sans">Three pathways of work and dedication. Click a pillar to explore.</p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2.5">
+                
+                {/* 1. Author Pillar */}
+                <div 
+                  onClick={() => {
+                    const el = document.getElementById('portfolio');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="group cursor-pointer p-3.5 bg-surface-container-low border border-outline-variant/20 rounded-md hover:border-[#7D8E7D] hover:bg-[#7D8E7D]/5 transition-all duration-300 shadow-xs hover:shadow-md flex flex-col items-center justify-between text-center min-h-[140px]"
+                >
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <BookOpen size={14} />
+                  </div>
+                  <div className="space-y-1 mt-2 flex-1 flex flex-col justify-center">
+                    <h4 className="font-serif font-bold text-xs text-on-surface">Author</h4>
+                    <p className="text-[9px] text-on-surface-variant leading-tight">BriBooks storefront and published novels.</p>
+                  </div>
+                  <span className="text-[8px] font-sans uppercase tracking-widest text-[#7D8E7D] font-bold group-hover:underline mt-2">
+                    Open Shop →
+                  </span>
+                </div>
+
+                {/* 2. Writer Pillar */}
+                <div 
+                  onClick={() => {
+                    const el = document.getElementById('experience');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="group cursor-pointer p-3.5 bg-surface-container-low border border-outline-variant/20 rounded-md hover:border-[#7D8E7D] hover:bg-[#7D8E7D]/5 transition-all duration-300 shadow-xs hover:shadow-md flex flex-col items-center justify-between text-center min-h-[140px]"
+                >
+                  <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+                    <Feather size={14} />
+                  </div>
+                  <div className="space-y-1 mt-2 flex-1 flex flex-col justify-center">
+                    <h4 className="font-serif font-bold text-xs text-on-surface">Writer</h4>
+                    <p className="text-[9px] text-on-surface-variant leading-tight">NGO chronicles and freelance stories.</p>
+                  </div>
+                  <span className="text-[8px] font-sans uppercase tracking-widest text-[#7D8E7D] font-bold group-hover:underline mt-2">
+                    See Work →
+                  </span>
+                </div>
+
+                {/* 3. Student Pillar */}
+                <div 
+                  onClick={() => setResumeOpen(true)}
+                  className="group cursor-pointer p-3.5 bg-surface-container-low border border-outline-variant/20 rounded-md hover:border-[#7D8E7D] hover:bg-[#7D8E7D]/5 transition-all duration-300 shadow-xs hover:shadow-md flex flex-col items-center justify-between text-center min-h-[140px]"
+                >
+                  <div className="w-8 h-8 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+                    <GraduationCap size={14} />
+                  </div>
+                  <div className="space-y-1 mt-2 flex-1 flex flex-col justify-center">
+                    <h4 className="font-serif font-bold text-xs text-on-surface">Student</h4>
+                    <p className="text-[9px] text-on-surface-variant leading-tight">Academic journey & professional resume.</p>
+                  </div>
+                  <span className="text-[8px] font-sans uppercase tracking-widest text-[#7D8E7D] font-bold group-hover:underline mt-2">
+                    Resume CV →
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+          </section>
+
+          {/* SECTION 4: CASE STUDY EXPERIENCE */}
+          <section id="experience" className="py-16 px-6 bg-[#fcfbfa] border-b border-outline-variant/15">
+            <div className="max-w-sm mx-auto space-y-6">
+              
+              <div className="text-left space-y-1">
+                <span className="text-[9px] font-sans font-bold tracking-widest text-primary uppercase">
+                  Case Studies
+                </span>
+                <h3 className="font-serif text-lg font-bold text-on-surface">Experience & Impact</h3>
+                <div className="w-8 h-0.5 bg-[#7D8E7D] rounded mt-1"></div>
+              </div>
+
+              {/* 2-Column Experience Grid (rendered cleanly as list/stack) */}
+              <div className="space-y-4">
+                
+                {/* Case Study 1 */}
+                <div className="p-4 bg-white border border-stone-200/80 rounded shadow-xs hover:shadow-sm transition-shadow text-left">
+                  <div className="flex items-start gap-2.5 mb-2">
+                    <div className="p-1.5 bg-[#7D8E7D]/10 rounded text-[#7D8E7D] mt-0.5">
+                      <BookOpen size={12} />
+                    </div>
+                    <div>
+                      <h4 className="font-serif font-bold text-xs text-on-surface">Published Author</h4>
+                      <p className="text-[10px] text-stone-500 font-sans">The Mask of Happiness</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-on-surface-variant leading-relaxed mb-3">
+                    Wrote and published an emotional fiction novel dealing with vulnerability and mental well-being, reaching global readers.
+                  </p>
+                  <div className="space-y-1">
+                    <p className="text-[9px] uppercase font-sans tracking-widest font-bold text-primary">Core Skills:</p>
+                    <ul className="text-[10px] text-stone-600 space-y-1 list-disc list-inside">
+                      <li>Novel plot architecture & outlining</li>
+                      <li>In-depth character development maps</li>
+                      <li>Creative publishing and editing</li>
+                      <li>Storytelling for emotional engagement</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Case Study 2 */}
+                <div className="p-4 bg-white border border-stone-200/80 rounded shadow-xs hover:shadow-sm transition-shadow text-left">
+                  <div className="flex items-start gap-2.5 mb-2">
+                    <div className="p-1.5 bg-secondary/10 rounded text-secondary mt-0.5">
+                      <Briefcase size={12} />
+                    </div>
+                    <div>
+                      <h4 className="font-serif font-bold text-xs text-on-surface">InAmigos Foundation</h4>
+                      <p className="text-[10px] text-stone-500 font-sans">Content Writing Internship</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-on-surface-variant leading-relaxed mb-3">
+                    Managed digital community content creation, drafting editorial blog articles, newsletters, and engaging stories to promote social goals.
+                  </p>
+                  <div className="space-y-1">
+                    <p className="text-[9px] uppercase font-sans tracking-widest font-bold text-secondary">Core Skills:</p>
+                    <ul className="text-[10px] text-stone-600 space-y-1 list-disc list-inside">
+                      <li>Strategic editorial copywriting</li>
+                      <li>Audience persona mapping</li>
+                      <li>Newsletter drafting & outreach</li>
+                      <li>Campaign blog content calendars</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Case Study 3 */}
+                <div className="p-4 bg-white border border-stone-200/80 rounded shadow-xs hover:shadow-sm transition-shadow text-left">
+                  <div className="flex items-start gap-2.5 mb-2">
+                    <div className="p-1.5 bg-tertiary/10 rounded text-tertiary mt-0.5">
+                      <Compass size={12} />
+                    </div>
+                    <div>
+                      <h4 className="font-serif font-bold text-xs text-on-surface">Marpu Foundation</h4>
+                      <p className="text-[10px] text-stone-500 font-sans">NGO Insights Advocate</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-on-surface-variant leading-relaxed mb-3">
+                    Conducted field and online research of grassroots education initiatives, composing narrative summaries and reports.
+                  </p>
+                  <div className="space-y-1">
+                    <p className="text-[9px] uppercase font-sans tracking-widest font-bold text-tertiary">Core Skills:</p>
+                    <ul className="text-[10px] text-stone-600 space-y-1 list-disc list-inside">
+                      <li>Grassroots research methodologies</li>
+                      <li>Advocacy & impact report summaries</li>
+                      <li>NGO community campaign strategy</li>
+                      <li>Transfiguring field reports to story narratives</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Case Study 4 */}
+                <div className="p-4 bg-white border border-stone-200/80 rounded shadow-xs hover:shadow-sm transition-shadow text-left">
+                  <div className="flex items-start gap-2.5 mb-2">
+                    <div className="p-1.5 bg-primary/10 rounded text-primary mt-0.5">
+                      <Sparkles size={12} />
+                    </div>
+                    <div>
+                      <h4 className="font-serif font-bold text-xs text-on-surface">Public Speaking</h4>
+                      <p className="text-[10px] text-stone-500 font-sans">School Anchoring & Assemblies</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-on-surface-variant leading-relaxed mb-3">
+                    Anchored assemblies, annual days, and national-level school functions with excellent stage control, scripting eloquence, and presence.
+                  </p>
+                  <div className="space-y-1">
+                    <p className="text-[9px] uppercase font-sans tracking-widest font-bold text-primary">Core Skills:</p>
+                    <ul className="text-[10px] text-stone-600 space-y-1 list-disc list-inside">
+                      <li>Public speaking & voice modulation</li>
+                      <li>Live crowd anchoring & stage control</li>
+                      <li>Scriptwriting & program flow scheduling</li>
+                      <li>Eloquence & active presentation skills</li>
+                    </ul>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </section>
+
+          {/* SECTION 5: SKILLS GRID */}
+          <section id="skills" className="py-16 px-6 bg-surface-container-low border-b border-outline-variant/15">
+            <div className="max-w-sm mx-auto space-y-6">
+              
+              <div className="text-left space-y-1">
+                <span className="text-[9px] font-sans font-bold tracking-widest text-primary uppercase">
+                  Capabilities
+                </span>
+                <h3 className="font-serif text-lg font-bold text-on-surface">Skills Directory</h3>
+                <div className="w-8 h-0.5 bg-[#7D8E7D] rounded mt-1"></div>
+              </div>
+
+              <div className="space-y-4 text-left">
+                
+                {/* 1. Writing & Content */}
+                <div className="p-3.5 bg-white border border-stone-200 rounded">
+                  <h4 className="font-serif font-bold text-xs text-on-surface mb-2.5 flex items-center gap-1.5">
+                    <Feather size={12} className="text-primary" />
+                    <span>Writing & Content</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Creative Storytelling', 'Content Strategy', 'SEO Copywriting', 'Editorial Planning', 'Ghostwriting', 'Manuscript Design'].map((s) => (
+                      <span key={s} className="text-[10px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded-xs font-sans">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 2. Design & Tools */}
+                <div className="p-3.5 bg-white border border-stone-200 rounded">
+                  <h4 className="font-serif font-bold text-xs text-on-surface mb-2.5 flex items-center gap-1.5">
+                    <Sparkles size={12} className="text-secondary" />
+                    <span>Design & Tools</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Canva Pro', 'Notion Workspace', 'Google Suite', 'Markdown', 'Git/Vite Basics', 'Storyboards'].map((s) => (
+                      <span key={s} className="text-[10px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded-xs font-sans">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Languages */}
+                <div className="p-3.5 bg-white border border-stone-200 rounded">
+                  <h4 className="font-serif font-bold text-xs text-on-surface mb-2.5 flex items-center gap-1.5">
+                    <Compass size={12} className="text-tertiary" />
+                    <span>Languages</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['English (Fluent)', 'Hindi (Native)', 'Odia (Mother Tongue)'].map((s) => (
+                      <span key={s} className="text-[10px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded-xs font-sans font-medium">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </section>
+
+          {/* SECTION 6: AWARDS GRID */}
+          <section id="awards" className="py-16 px-6 bg-background border-b border-outline-variant/15">
+            <div className="max-w-sm mx-auto space-y-6">
+              
+              <div className="text-center space-y-1">
+                <span className="text-[9px] font-sans font-bold tracking-widest text-primary uppercase">
+                  Honors
+                </span>
+                <h3 className="font-serif text-lg font-bold text-on-surface">Awards & Recognition</h3>
+                <p className="text-[11px] text-on-surface-variant font-sans">Achievements in writing, debate, and independent publishing.</p>
+              </div>
+
+              {/* 3-Item Awards Grid */}
+              <div className="grid grid-cols-1 gap-3.5 text-left">
+                
+                {/* Award 1 */}
+                <div className="p-4 bg-white border border-stone-200 rounded shadow-xs relative overflow-hidden">
+                  <div className="absolute right-3 top-3 opacity-15 text-primary">
+                    <Award size={28} />
+                  </div>
+                  <span className="text-[8px] font-sans font-bold tracking-widest text-[#7D8E7D] uppercase">Writing</span>
+                  <h4 className="font-serif font-bold text-xs text-on-surface mt-1">1st Prize Winner</h4>
+                  <p className="text-[10px] text-stone-500 font-sans">National Literary Creative Writing Competition</p>
+                  <p className="text-[11px] text-on-surface-variant mt-1.5 leading-relaxed">
+                    Acknowledged at the state level for creative execution in emotional storytelling essays.
+                  </p>
+                </div>
+
+                {/* Award 2 */}
+                <div className="p-4 bg-white border border-stone-200 rounded shadow-xs relative overflow-hidden">
+                  <div className="absolute right-3 top-3 opacity-15 text-secondary">
+                    <Award size={28} />
+                  </div>
+                  <span className="text-[8px] font-sans font-bold tracking-widest text-[#7D8E7D] uppercase">Debate</span>
+                  <h4 className="font-serif font-bold text-xs text-on-surface mt-1">Distinguished Speaker</h4>
+                  <p className="text-[10px] text-stone-500 font-sans">Regional Literary and Debate Meets</p>
+                  <p className="text-[11px] text-on-surface-variant mt-1.5 leading-relaxed">
+                    Recognized for eloquent stage presence and strong argumentation in scholastic public panels.
+                  </p>
+                </div>
+
+                {/* Award 3 */}
+                <div className="p-4 bg-white border border-stone-200 rounded shadow-xs relative overflow-hidden">
+                  <div className="absolute right-3 top-3 opacity-15 text-tertiary">
+                    <Award size={28} />
+                  </div>
+                  <span className="text-[8px] font-sans font-bold tracking-widest text-[#7D8E7D] uppercase">Publishing</span>
+                  <h4 className="font-serif font-bold text-xs text-on-surface mt-1">Young Published Author</h4>
+                  <p className="text-[10px] text-stone-500 font-sans">BriBooks Emerging Writer Recognition</p>
+                  <p className="text-[11px] text-on-surface-variant mt-1.5 leading-relaxed">
+                    Celebrated for releasing the physical and digital novel "The Mask of Happiness" before the age of 21.
+                  </p>
+                </div>
+
+              </div>
 
             </div>
           </section>
@@ -749,6 +1158,145 @@ export default function App() {
                 <span>{JOURNAL_ENTRIES.length} ARTICLES IN ARCHIVE</span>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* INTERACTIVE RESUME MODAL */}
+        {resumeOpen && (
+          <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="w-full max-w-[450px] bg-[#fdfbf7] border border-outline-variant/30 rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className="px-5 py-4 border-b border-outline-variant/20 flex items-center justify-between bg-[#f5f3ef] shrink-0">
+                <div className="flex items-center gap-2">
+                  <FileText size={16} className="text-[#7D8E7D]" />
+                  <h3 className="font-serif text-sm font-bold text-on-surface">
+                    Jasmine Patra — Resume
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => window.print()}
+                    className="p-1.5 rounded hover:bg-stone-200/50 transition-colors text-primary flex items-center gap-1 cursor-pointer text-[10px] font-sans font-bold uppercase tracking-wider"
+                    title="Print CV"
+                  >
+                    <Download size={12} />
+                    <span>Print</span>
+                  </button>
+                  <button 
+                    onClick={() => setResumeOpen(false)}
+                    className="p-1.5 rounded-full hover:bg-stone-200/50 transition-colors text-on-surface-variant cursor-pointer"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Resume Body */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 text-left font-sans select-text">
+                
+                {/* Header Information */}
+                <div className="text-center space-y-2 border-b border-stone-200 pb-5">
+                  <h2 className="font-serif text-2xl font-bold text-primary tracking-tight">Jasmine Patra</h2>
+                  <p className="text-[11px] uppercase tracking-widest text-stone-500 font-bold font-sans">
+                    Creative Writer & Content Strategist
+                  </p>
+                  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[10px] text-stone-600 font-medium">
+                    <span className="flex items-center gap-1">
+                      <Mail size={10} />
+                      pitambarpatra093@gmail.com
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MapPin size={10} />
+                      Rourkela, Odisha
+                    </span>
+                  </div>
+                </div>
+
+                {/* About Brief */}
+                <div className="space-y-1.5">
+                  <h4 className="text-[10px] uppercase font-bold tracking-widest text-stone-400 font-sans border-b border-stone-100 pb-1">Professional Profile</h4>
+                  <p className="text-xs text-stone-700 leading-relaxed font-sans">
+                    A commerce student with a deeply creative soul. Bridging the gap between creative storytelling, audience persona mapping, and narrative strategy, I craft authentic stories that spark community engagement and digital impact.
+                  </p>
+                </div>
+
+                {/* Experience */}
+                <div className="space-y-3">
+                  <h4 className="text-[10px] uppercase font-bold tracking-widest text-stone-400 font-sans border-b border-stone-100 pb-1">Experience</h4>
+                  
+                  {/* Item 1 */}
+                  <div className="space-y-1 text-xs">
+                    <div className="flex justify-between items-start font-medium">
+                      <h5 className="font-serif font-bold text-on-surface">Published Novelist ("The Mask of Happiness")</h5>
+                      <span className="text-[9px] text-stone-500 font-sans font-semibold">2023 - Present</span>
+                    </div>
+                    <p className="text-[10px] text-primary italic font-serif">BriBooks Publishing</p>
+                    <p className="text-stone-600 text-[11px] leading-relaxed">
+                      Wrote and promoted an independent novel on human resilience and vulnerability, leading marketing drives and editorial critiques.
+                    </p>
+                  </div>
+
+                  {/* Item 2 */}
+                  <div className="space-y-1 text-xs">
+                    <div className="flex justify-between items-start font-medium">
+                      <h5 className="font-serif font-bold text-on-surface">Content Writer Intern</h5>
+                      <span className="text-[9px] text-stone-500 font-sans font-semibold">Short-term</span>
+                    </div>
+                    <p className="text-[10px] text-secondary italic font-serif">InAmigos Foundation (NGO)</p>
+                    <p className="text-stone-600 text-[11px] leading-relaxed">
+                      Designed and composed social impact copies, newsletter stories, and digital outreach assets supporting children and community welfare.
+                    </p>
+                  </div>
+
+                  {/* Item 3 */}
+                  <div className="space-y-1 text-xs">
+                    <div className="flex justify-between items-start font-medium">
+                      <h5 className="font-serif font-bold text-on-surface">NGO Research Collaborator</h5>
+                      <span className="text-[9px] text-stone-500 font-sans font-semibold">Collaborative</span>
+                    </div>
+                    <p className="text-[10px] text-tertiary italic font-serif">Marpu Foundation</p>
+                    <p className="text-stone-600 text-[11px] leading-relaxed">
+                      Conducted research on community education frameworks and composed visual storytelling storyboards for donor awareness.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Education */}
+                <div className="space-y-2">
+                  <h4 className="text-[10px] uppercase font-bold tracking-widest text-stone-400 font-sans border-b border-stone-100 pb-1">Education</h4>
+                  <div className="text-xs">
+                    <div className="flex justify-between items-start font-medium">
+                      <h5 className="font-serif font-bold text-on-surface">Bachelor of Commerce (B.Com Student)</h5>
+                      <span className="text-[9px] text-stone-500 font-sans font-semibold">Ongoing</span>
+                    </div>
+                    <p className="text-stone-600 text-[11px]">Specialization in Business Studies and Financial Accounting, focusing on Content Strategy in Commercial Landscapes.</p>
+                  </div>
+                </div>
+
+                {/* Core Strengths */}
+                <div className="space-y-2">
+                  <h4 className="text-[10px] uppercase font-bold tracking-widest text-stone-400 font-sans border-b border-stone-100 pb-1">Capabilities</h4>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {['Creative Writing', 'Content Management', 'Audience Personas', 'Canva Pro', 'SEO Copywriting', 'Stage Anchoring', 'Notion', 'English (Fluent)'].map((sk) => (
+                      <span key={sk} className="text-[9px] bg-stone-100 text-stone-600 border border-stone-200/60 px-2 py-0.5 rounded font-sans font-medium">
+                        {sk}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Modal Footer */}
+              <div className="px-5 py-3 bg-[#f5f3ef] border-t border-outline-variant/20 flex justify-between items-center text-[9px] text-on-surface-variant/60 font-sans shrink-0">
+                <span>VERIFIED PROFESSIONAL REFRESH</span>
+                <span>SECURE CLIENT PROFILE</span>
+              </div>
+            </motion.div>
           </div>
         )}
 
