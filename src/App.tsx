@@ -13,6 +13,7 @@ import BookReader from './components/BookReader';
 import CorrespondenceBoard from './components/CorrespondenceBoard';
 import AmbientSoundboard from './components/AmbientSoundboard';
 import BookPurchase from './components/BookPurchase';
+import ConnectCollaborate from './components/ConnectCollaborate';
 import { 
   Menu, 
   X, 
@@ -72,6 +73,7 @@ export default function App() {
   const [formPrivate, setFormPrivate] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submissionError, setSubmissionError] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   // Interactive Coffee Mug state
   const [coffeeClicks, setCoffeeClicks] = useState(0);
@@ -135,11 +137,14 @@ export default function App() {
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmissionError('');
+    setFormSubmitted(false);
 
     if (!formName.trim() || !formEmail.trim() || !formStory.trim()) {
       setSubmissionError('Please fill in all requested fields of the correspondence form.');
       return;
     }
+
+    setIsSending(true);
 
     // Explicitly apply Identity masking to Name, Email, and Story
     const maskedName = maskIdentityParameters(formName.trim());
@@ -155,47 +160,48 @@ export default function App() {
       isPrivate: formPrivate
     };
 
-    const updated = [newMessage, ...messages];
-    setMessages(updated);
-    localStorage.setItem('cozy_sanctuary_letters', JSON.stringify(updated));
+    try {
+      // Connect to the Sheet.best API with a POST request
+      const response = await fetch('https://api.sheetbest.com/sheets/c93fb017-30ae-43d3-8754-f6f4b70e8a50', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "Timestamp": newMessage.timestamp,
+          "Name": newMessage.name,
+          "Email": newMessage.email,
+          "Your Story": newMessage.story
+        })
+      });
 
-    // Optional Sheet.best sync as requested in constraints
-    const SHEET_BEST_URL = (import.meta as any).env.VITE_SHEET_BEST_URL || localStorage.getItem('VITE_SHEET_BEST_URL') || '';
-    if (SHEET_BEST_URL) {
-      try {
-        await fetch(SHEET_BEST_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            Timestamp: newMessage.timestamp,
-            Name: newMessage.name,
-            Email: newMessage.email,
-            Phone: '[Not Provided - Portfolio Feed]',
-            ItemCategory: 'Correspondence Letter',
-            ItemDescription: newMessage.story,
-            LossLocation: 'Cosmic Sanctuary Web',
-            FoundDate: new Date().toLocaleDateString(),
-            StorageHub: newMessage.isPrivate ? 'Private Mailbox' : 'Public Ledger',
-            Status: 'Received',
-            ImageReference: 'none'
-          })
-        });
-      } catch (err) {
-        console.warn('Sheet.best backup deferred:', err);
+      if (!response.ok) {
+        throw new Error('API response was not successful');
       }
+
+      // If successful, save locally as well
+      const updated = [newMessage, ...messages];
+      setMessages(updated);
+      localStorage.setItem('cozy_sanctuary_letters', JSON.stringify(updated));
+
+      // Reset Form
+      setFormName('');
+      setFormEmail('');
+      setFormStory('');
+      setFormPrivate(false);
+      setFormSubmitted(true);
+
+      // Dismiss confirmation after delay
+      setTimeout(() => {
+        setFormSubmitted(false);
+      }, 6000);
+
+    } catch (err) {
+      console.error('Sheet.best submission error:', err);
+      setSubmissionError('Unable to transmit your letter to the sanctuary database. Please check your network connection and try again.');
+    } finally {
+      setIsSending(false);
     }
-
-    // Reset Form
-    setFormName('');
-    setFormEmail('');
-    setFormStory('');
-    setFormPrivate(false);
-    setFormSubmitted(true);
-
-    // Dismiss confirmation after delay
-    setTimeout(() => {
-      setFormSubmitted(false);
-    }, 6000);
   };
 
   const handleDeleteMessage = (id: string) => {
@@ -222,10 +228,10 @@ export default function App() {
       <div className="w-full max-w-[480px] bg-background min-h-screen md:min-h-[85vh] md:my-4 flex flex-col relative shadow-2xl border-x border-outline-variant/30 overflow-hidden">
         
         {/* TOP HEADER */}
-        <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-outline-variant/30 px-5 py-4 flex items-center justify-between">
+        <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-outline-variant/30 px-5 py-2 flex items-center justify-between">
           <button 
             onClick={() => setDrawerOpen(true)}
-            className="p-1 -ml-1 rounded-full hover:bg-stone-200/50 transition-colors text-primary active:scale-95 cursor-pointer"
+            className="w-11 h-11 -ml-2 rounded-full hover:bg-stone-200/50 transition-colors text-primary active:scale-95 cursor-pointer flex items-center justify-center"
             aria-label="Open Archive Index"
           >
             <Menu size={20} />
@@ -237,7 +243,7 @@ export default function App() {
 
           <button 
             onClick={() => setJournalOpen(true)}
-            className="p-1 -mr-1 rounded-full hover:bg-stone-200/50 transition-colors text-primary active:scale-95 cursor-pointer"
+            className="w-11 h-11 -mr-2 rounded-full hover:bg-stone-200/50 transition-colors text-primary active:scale-95 cursor-pointer flex items-center justify-center"
             aria-label="View Journal Essays"
             title="Open Sanctuary Journal"
           >
@@ -330,14 +336,14 @@ export default function App() {
         <main className="flex-1 overflow-y-auto no-scrollbar scroll-smooth">
           
           {/* 1. HERO SECTION */}
-          <section id="hero" className="relative px-6 py-16 flex flex-col items-center justify-center text-center overflow-hidden border-b border-outline-variant/10">
-            <div className="relative z-10 max-w-sm mx-auto space-y-6">
+          <section id="hero" className="relative min-h-[calc(100vh-60px)] px-6 py-12 flex flex-col items-center justify-center text-center overflow-hidden border-b border-outline-variant/10">
+            <div className="relative z-10 max-w-sm mx-auto space-y-6 flex flex-col items-center justify-center">
               
-              <h2 className="font-serif text-[28px] leading-tight font-bold text-on-surface">
+              <h2 className="font-serif text-[28px] sm:text-[32px] md:text-[34px] leading-tight font-bold text-on-surface">
                 WELCOME TO MY LITTLE CORNER OF <span className="italic text-primary underline decoration-tertiary-fixed-dim/70 decoration-2 underline-offset-4">CURIOSITY</span>
               </h2>
               
-              <p className="font-sans text-sm md:text-base leading-relaxed text-on-surface-variant">
+              <p className="font-sans text-xs sm:text-sm leading-relaxed text-on-surface-variant">
                 I’m Jasmine Patra—a writer, dreamer, and storyteller crafting digital sanctuaries through words.
               </p>
 
@@ -414,6 +420,9 @@ export default function App() {
                   — Jasmine Patra
                 </p>
               </div>
+
+              {/* Connect & Collaborate Social Section */}
+              <ConnectCollaborate />
 
             </div>
           </section>
@@ -552,10 +561,11 @@ export default function App() {
                   </label>
                   <input 
                     type="text"
+                    disabled={isSending}
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
                     placeholder="Enter your name"
-                    className="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:outline-none px-2 py-2 text-xs font-sans transition-colors rounded-sm"
+                    className="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:outline-none px-2 py-2 text-xs font-sans transition-colors rounded-sm disabled:opacity-50"
                   />
                 </div>
 
@@ -565,10 +575,11 @@ export default function App() {
                   </label>
                   <input 
                     type="email"
+                    disabled={isSending}
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:outline-none px-2 py-2 text-xs font-sans transition-colors rounded-sm"
+                    className="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:outline-none px-2 py-2 text-xs font-sans transition-colors rounded-sm disabled:opacity-50"
                   />
                 </div>
 
@@ -577,11 +588,12 @@ export default function App() {
                     Your Story
                   </label>
                   <textarea 
+                    disabled={isSending}
                     value={formStory}
                     onChange={(e) => setFormStory(e.target.value)}
                     placeholder="What's on your mind? (Note: 12-digit IDs will be automatically masked for safety)"
                     rows={4}
-                    className="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:outline-none px-2 py-2 text-xs font-sans transition-colors resize-none rounded-sm"
+                    className="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:outline-none px-2 py-2 text-xs font-sans transition-colors resize-none rounded-sm disabled:opacity-50"
                   />
                 </div>
 
@@ -589,10 +601,11 @@ export default function App() {
                 <div className="flex items-center gap-2 pt-1">
                   <input
                     type="checkbox"
+                    disabled={isSending}
                     id="private-check"
                     checked={formPrivate}
                     onChange={(e) => setFormPrivate(e.target.checked)}
-                    className="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5"
+                    className="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5 disabled:opacity-50"
                   />
                   <label htmlFor="private-check" className="text-[11px] font-sans text-on-surface-variant/80 cursor-pointer">
                     Keep this letter private (Only visible under "All Post")
@@ -601,12 +614,25 @@ export default function App() {
 
                 <button 
                   type="submit"
-                  className="w-full bg-primary hover:bg-primary/95 text-on-primary py-3 rounded-sm text-xs font-label-sm font-bold uppercase tracking-widest transition-all active:scale-[0.98] border border-primary-container cursor-pointer flex items-center justify-center gap-2"
+                  disabled={isSending}
+                  className="w-full bg-primary hover:bg-primary/95 disabled:bg-primary/60 text-on-primary py-3 rounded-sm text-xs font-label-sm font-bold uppercase tracking-widest transition-all active:scale-[0.98] border border-primary-container cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <Send size={12} />
-                  Send Message
+                  {isSending ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span>Sending Letter...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={12} />
+                      <span>Send Message</span>
+                    </>
+                  )}
                 </button>
               </form>
+
+              {/* Connect & Collaborate Social Section */}
+              <ConnectCollaborate />
 
             </div>
           </section>
